@@ -1,6 +1,5 @@
+
 from math import log
-
-
 
 # data pre-processing
 def DataPre(FilePath, features):
@@ -9,11 +8,10 @@ def DataPre(FilePath, features):
         for line in f:
             rowDict = {}
             words = line.strip().split('\t')
-            for i in range(5):
+            for i in range(len(features)):
                 rowDict[features[i]] = words[i]
             data_feature.append(rowDict)
     return data_feature
-
 
 
 # calculating the information entropy
@@ -35,7 +33,7 @@ def EntropyCal(labels):
 def InfoGain(data_features, features):
     IGain ={}
     Entropy = EntropyCal([feature['label'] for feature in data_features])
-    print(Entropy)
+    # print(Entropy)
     for feature in features[:-1]:
         count = {}
         IGain[feature] = 0
@@ -49,7 +47,7 @@ def InfoGain(data_features, features):
         for attribute in count:
             CEntropy += EntropyCal(count[attribute])*len(count[attribute])/len(data_features)
         IGain[feature] =  Entropy - CEntropy
-    print(IGain)
+    # print(IGain)
     return max(IGain.items(), key=lambda x:x[1])[0]
 
 # partition samples
@@ -81,23 +79,26 @@ def labelSame(dataSet):
         return True
 
 
-DTree = []
-def creatTree(data, features):
+DTree = {}
+def creatTree(data, attr ,features):
     global DTree
     if labelSame(data) or len(features) == 1:
-        DTree.append(data)
+        DTree[attr] = data
         return "OK"
     classify_feature = InfoGain(data, features)
-    features.remove(classify_feature)
+    features_temp = [i for i in features]
+    features_temp.remove(classify_feature)
     Children = Partition(data, classify_feature)
     for Child in Children:
-        creatTree(Children[Child],features)
+        creatTree(Children[Child],classify_feature,features_temp)
 
 
 
-data_file_path = r"T:\MyStudyData\class\Meachine Learning\Experiment\lab1 decision tree\lenses.txt"
+data_file_path = r"lenses.txt"
 features = ['age', 'prescript', 'astigmatic', 'tearRate', 'label']
+# features = ['a', 'b', 'label']
 data_feature = DataPre(data_file_path, features)
-creatTree(data_feature, features)
-
+creatTree(data_feature, 'all', features)
+print(DTree)
 # print(Partition(data_feature,'tearRate'))
+
