@@ -8,6 +8,7 @@ class Tree(object):
 
     def dataGet(self, data):
         self.set = data
+        self.size = len(data)
 
     def fClassify(self, feature):
         self.classify = feature
@@ -109,6 +110,15 @@ def creatTree(data, attr, features):
         t.next.append(creatTree(Children[Child], Child, features_temp))
     return t
 
+command = []
+def plot_tree(tree):
+    if len(tree.next) == 0:
+        return "OK"
+    global command
+    for node in tree.next:
+        command.append(tree.attr+str(tree.size)+ "->"+node.attr+str(node.size))
+        plot_tree(node)
+    # return command
 
 
 data_file_path = r"lenses.txt"
@@ -116,6 +126,9 @@ features = ['age', 'prescript', 'astigmatic', 'tearRate', 'label']
 # features = ['a', 'b', 'label']
 data_feature = DataPre(data_file_path, features)
 D = creatTree(data_feature, 'all', features)
-print("Ok")
+plot_tree(D)
+with open("pic.dot", 'w') as f:
+    data = "digraph G{"+"\n\t"+"\n\t".join(command)+"\n}"
+    f.write(data)
 # print(Partition(data_feature,'tearRate'))
 
