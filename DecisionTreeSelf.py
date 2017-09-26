@@ -1,5 +1,17 @@
-
 from math import log
+
+class Tree(object):
+
+    def __init__(self, f):
+        self.attr = f
+        self.next = []
+
+    def dataGet(self, data):
+        self.set = data
+
+    def fClassify(self, feature):
+        self.classify = feature
+
 
 # data pre-processing
 def DataPre(FilePath, features):
@@ -79,18 +91,23 @@ def labelSame(dataSet):
         return True
 
 
-DTree = {}
-def creatTree(data, attr ,features):
-    global DTree
+
+def creatTree(data, attr, features):
     if labelSame(data) or len(features) == 1:
-        DTree[attr] = data
-        return "OK"
+        t = Tree(attr)
+        t.dataGet(data)
+        t.fClassify(None)
+        return t
     classify_feature = InfoGain(data, features)
+    t = Tree(attr)
+    t.dataGet(data)
+    t.fClassify(classify_feature)
     features_temp = [i for i in features]
     features_temp.remove(classify_feature)
     Children = Partition(data, classify_feature)
     for Child in Children:
-        creatTree(Children[Child],classify_feature,features_temp)
+        t.next.append(creatTree(Children[Child], Child, features_temp))
+    return t
 
 
 
@@ -98,7 +115,7 @@ data_file_path = r"lenses.txt"
 features = ['age', 'prescript', 'astigmatic', 'tearRate', 'label']
 # features = ['a', 'b', 'label']
 data_feature = DataPre(data_file_path, features)
-creatTree(data_feature, 'all', features)
-print(DTree)
+D = creatTree(data_feature, 'all', features)
+print("Ok")
 # print(Partition(data_feature,'tearRate'))
 
