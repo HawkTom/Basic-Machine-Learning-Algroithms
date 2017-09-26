@@ -118,17 +118,20 @@ def plot_tree(tree):
     for node in tree.next:
         command.append(tree.attr+str(tree.size)+ "->"+node.attr+str(node.size))
         plot_tree(node)
-    # return command
 
+
+def dot_File(tree):
+    plot_tree(D)
+    with open("pic.dot", 'w') as f:
+        data = "digraph G{" + "\n\t" + "\n\t".join(command) + "\n}"
+        f.write(data)
 
 data_file_path = r"lenses.txt"
 features = ['age', 'prescript', 'astigmatic', 'tearRate', 'label']
 # features = ['a', 'b', 'label']
 data_feature = DataPre(data_file_path, features)
 D = creatTree(data_feature, 'all', features)
-plot_tree(D)
-with open("pic.dot", 'w') as f:
-    data = "digraph G{"+"\n\t"+"\n\t".join(command)+"\n}"
-    f.write(data)
-# print(Partition(data_feature,'tearRate'))
+dot_File(D)
 
+# 输出dot文件 用graphviz 工具可视化
+# 命令行 dot -Tpdf tree.dot -o output.pdf
