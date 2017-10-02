@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+from math import sqrt
+
 
 def graph_plot(map, start, end, wall, path=None):
     fig = plt.figure(0)
@@ -26,8 +28,28 @@ def graph_plot(map, start, end, wall, path=None):
     axes.tick_params(length=0)
     plt.show()
 
+def h_n(node1, node2):
+    return(sqrt(pow(node1[0] - node2[0], 2) + pow(node1[1]-node2[1], 2)))
+
+
+def next_position(node, position):
+    if position == 0:
+        return [node[0], node[1]+1]
+    elif position == 1:
+        return [node[0]+1, node[1]]
+    elif position == 1:
+        return [node[0], node[1]-1]
+    elif position == 1:
+        return [node[0]-1, node[1]]
+
 def greedy_search(start, end, blocks, map):
-    pass
+    frontier = [(start,h_n(start,end))]
+    for node in frontier:
+        for i in range(4):
+            node_next = next_position(node, i)
+            if node_next not in blocks:
+                frontier.append((node_next, h_n(node_next, end)))
+
 
 def A_star_search(start,end, blocks, map):
     pass
