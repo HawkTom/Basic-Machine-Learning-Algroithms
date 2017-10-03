@@ -1,4 +1,5 @@
 from math import log
+import os
 
 class Tree(object):
 
@@ -42,9 +43,10 @@ def EntropyCal(labels):
         entropy -= p*log(p, 2)
     return entropy
 
+
 # Information Gain Calculating
-def InfoGain(data_features, features):
-    IGain ={}
+def InfoGain(data_features, features, classify_type):
+    IGain, Gain_ratio ={}, {}
     Entropy = EntropyCal([feature['label'] for feature in data_features])
     # print(Entropy)
     for feature in features[:-1]:
@@ -56,12 +58,23 @@ def InfoGain(data_features, features):
             else:
                 count[sample[feature]].append(sample['label'])
         # Conditional Entropy
-        CEntropy = 0
+        CEntropy, IV = 0, 0
         for attribute in count:
-            CEntropy += EntropyCal(count[attribute])*len(count[attribute])/len(data_features)
+            temp = len(count[attribute]) / len(data_feature)
+            CEntropy += EntropyCal(count[attribute])* temp
+            if classify_type == "C4.5":
+                IV -= temp*log(temp, 2)
         IGain[feature] =  Entropy - CEntropy
+        if classify_type == "C4.5":
+            Gain_ratio[feature] = IGain[feature] / IV
     # print(IGain)
-    return max(IGain.items(), key=lambda x:x[1])[0]
+    if classify_type == "ID3":
+        return max(IGain.items(), key=lambda x:x[1])[0]
+    elif classify_type =="C4.5":
+        return max(Gain_ratio.items(), key=lambda x: x[1])[0]
+    else:
+        print("The Only Two Way is \"ID3\" and \"C4.5\"")
+        return False
 
 # partition samples
 def Partition(sample, attribute):
@@ -93,13 +106,13 @@ def labelSame(dataSet):
 
 
 
-def creatTree(data, attr, features):
+def creatTree(data, attr, features, classify_type = "ID3"):
     if labelSame(data) or len(features) == 1:
         t = Tree(attr)
         t.dataGet(data)
         t.fClassify(None)
         return t
-    classify_feature = InfoGain(data, features)
+    classify_feature = InfoGain(data, features, classify_type)
     t = Tree(attr)
     t.dataGet(data)
     t.fClassify(classify_feature)
@@ -120,18 +133,31 @@ def plot_tree(tree):
         plot_tree(node)
 
 
-def dot_File(tree):
-    plot_tree(D)
-    with open("pic.dot", 'w') as f:
+def dot_File(tree, output_file):
+    plot_tree(tree)
+    with open(output_file, 'w') as f:
         data = "digraph G{" + "\n\t" + "\n\t".join(command) + "\n}"
         f.write(data)
 
-data_file_path = r"lenses.txt"
-features = ['age', 'prescript', 'astigmatic', 'tearRate', 'label']
-# features = ['a', 'b', 'label']
-data_feature = DataPre(data_file_path, features)
-D = creatTree(data_feature, 'all', features)
-dot_File(D)
 
-# 输出dot文件 用graphviz 工具可视化
-# 命令行 dot -Tpdf tree.dot -o output.pdf
+data_file_path = r"lenses.txt"
+output_file_dot = "lense.dot"
+output_file_pdf = "lense.pdf"
+features = ['age', 'prescript', 'astigmatic', 'tearRate', 'label']
+data_feature = DataPre(data_file_path, features)
+D = creatTree(data_feature, 'all', features,classify_type="C4.5")
+dot_File(D, output_file_dot)
+
+try:
+    file_path = os.getcwd()
+    os.system(file_path[0:2] + "\n")
+    os.system("cd " + file_path[3:] + "\\")
+    os.system("dot -Tpdf " + output_file_dot + " -o " + output_file_pdf)
+    os.system("start " + output_file_pdf)
+except :
+    print(" The graphviz is not installed. ")
+
+
+
+# ??dot?? ?graphviz ?????
+# ??? dot -Tpdf tree.dot -o output.pdf
