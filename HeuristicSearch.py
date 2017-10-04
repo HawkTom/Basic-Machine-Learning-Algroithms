@@ -78,7 +78,6 @@ def A_star_search(start,end, blocks, map):
     explored = []
     while True:
         node = min(frontier, key=lambda x: x.fn)
-        # print(node.road)
         frontier.remove(node)
         explored.append(node.road[-1])
 
@@ -103,8 +102,6 @@ def greedy_search(start, end, blocks, map):
         frontier.remove(node)
         explored.append(node.road[-1])
 
-        if node.road[-1] == [11,5]:
-            print("OK")
         if node.road[-1] == end:
             return node.road
 

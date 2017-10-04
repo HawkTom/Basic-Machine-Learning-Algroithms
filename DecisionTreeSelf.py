@@ -139,23 +139,23 @@ def dot_File(tree, output_file):
         data = "digraph G{" + "\n\t" + "\n\t".join(command) + "\n}"
         f.write(data)
 
+if __name__ ==  "__main__":
+    data_file_path = r"lenses.txt"
+    output_file_dot = "lense.dot"
+    output_file_pdf = "lense.pdf"
+    features = ['age', 'prescript', 'astigmatic', 'tearRate', 'label']
+    data_feature = DataPre(data_file_path, features)
+    D = creatTree(data_feature, 'all', features,classify_type="C4.5")
+    dot_File(D, output_file_dot)
 
-data_file_path = r"lenses.txt"
-output_file_dot = "lense.dot"
-output_file_pdf = "lense.pdf"
-features = ['age', 'prescript', 'astigmatic', 'tearRate', 'label']
-data_feature = DataPre(data_file_path, features)
-D = creatTree(data_feature, 'all', features,classify_type="C4.5")
-dot_File(D, output_file_dot)
-
-try:
-    file_path = os.getcwd()
-    os.system(file_path[0:2] + "\n")
-    os.system("cd " + file_path[3:] + "\\")
-    os.system("dot -Tpdf " + output_file_dot + " -o " + output_file_pdf)
-    os.system("start " + output_file_pdf)
-except :
-    print(" The graphviz is not installed. ")
+    try:
+        file_path = os.getcwd()
+        os.system(file_path[0:2] + "\n")
+        os.system("cd " + file_path[3:] + "\\")
+        os.system("dot -Tpdf " + output_file_dot + " -o " + output_file_pdf)
+        os.system("start " + output_file_pdf)
+    except :
+        print(" The graphviz is not installed. ")
 
 
 
