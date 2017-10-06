@@ -1,14 +1,18 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-ErrorPermit = 1
 
+ErrorPermit = 1
+MinimumSize = 4
 class Tree(object):
-    def __init__(self, separate_data=0, estimate_data=0):
+    def __init__(self, separate_data=0, estimate_data=0, num=0):
         self.val = separate_data
         self.estimate = estimate_data
         self.leftChild = None
         self.rightChild = None
+        self.amount = num
+
+
 
 def dataRead(File):
     with open(File) as f:
@@ -69,8 +73,8 @@ def createTree(dataSet):
     ans = Partition(dataSet)
     dataDict = ans[0]
     split_point = ans[1]
-    if error[0] <= ErrorPermit or len(dataDict['+'])==0 or len(dataDict['-']) == 0:
-        return Tree(estimate_data = error[1])
+    if error[0] <= ErrorPermit or len(dataDict['+']) <= MinimumSize or len(dataDict['-']) <= MinimumSize:
+        return Tree(estimate_data = error[1], num=max(len(dataDict['+']), len(dataDict['-'])))
 
     head = Tree(separate_data=split_point[0])
     head.leftChild = createTree(dataDict['+'])
@@ -86,17 +90,19 @@ def plot_tree(tree):
     tree_right = tree.rightChild
 
     if tree_left.leftChild == None:
-        model_point.append([tree.val, tree_left.estimate])
-        command.append(str(tree.val) + '->' + str(tree_left.estimate) + '[label= \">' + str(tree.val) + '\"]')
+        model_point.append([tree.val+1, tree_left.estimate])
+        command.append(str(tree.val) + '->'+ str(tree_left.estimate) +
+                       '[label= \">' + str(tree.val) + 'num='+str(tree_left.amount)+'\"]')
     else:
         command.append(str(tree.val) + '->' + str(tree_left.val) + '[label= \">' + str(tree.val) + '\"]')
         plot_tree(tree.leftChild)
 
     if tree_right.leftChild == None:
-        model_point.append([tree.val-1, tree_right.estimate])
-        command.append(str(tree.val) + '->' + str(tree_right.estimate) + '[label= \"<' + str(tree.val) + '\"]')
+        model_point.append([tree.val, tree_right.estimate])
+        command.append(str(tree.val) + '->' + str(tree_right.estimate)
+                       + '[label= \"<=' + str(tree.val) + 'num='+str(tree_right.amount)+ '\"]')
     else:
-        command.append(str(tree.val) + '->' + str(tree_right.val) + '[label= \"<' + str(tree.val) + '\"]')
+        command.append(str(tree.val) + '->' + str(tree_right.val) + '[label= \"<=' + str(tree.val) + '\"]')
         plot_tree(tree.rightChild)
 
     return "OK"
@@ -107,26 +113,32 @@ def dot_File(tree, output_file):
         data = "digraph G{" + "\n\t" + "\n\t".join(command) + "\n}"
         f.write(data)
 
-def plot_model(data):
-    model_temp = []
-    for point in model_point:
-        model_temp.append([point[0] + 1, point[1]])
-
-    model = []
-    for i in range(len(model_point)):
-        model.append(model_temp[i])
-        model.append(model_point[i])
-
-    a = np.array(model[::-1])
-    b = np.array(data)
-    fig = plt.figure(0)
+def plot_model(figure_num, data, model_point = model_point):
+    fig = plt.figure(figure_num)
     axes = fig.add_subplot(111)
-    axes.plot(a[:, 0], a[:, 1], '-', color='green')
-    axes.plot(b[:, 0], b[:, 1], '.', color='red')
-    axes.set_xticks(list(range(23)))
-    plt.show()
+    if len(data) != 0:
+        b = np.array(data)
+        axes.plot(b[:, 0], b[:, 1], '.', color='red')
 
-    return model
+    if len(model_point) !=0 :
+        model_temp = []
+        for i in range(1, len(model_point)):
+            model_temp.append([model_point[i][0], model_point[i-1][1]])
+        model_temp.append([model_point[-1][0]-1, model_point[-1][1]])
+
+        model = []
+        for i in range(len(model_point)):
+            model.append(model_point[i])
+            model.append(model_temp[i])
+
+
+        a = np.array(model[::-1])
+        axes.plot(a[:, 0], a[:, 1], '-', color='green')
+
+    axes.set_xticks(list(range(23)))
+
+    return model if len(model_point) !=0 else "No model"
+
 
 if __name__ == "__main__":
     dataFile = "train.txt"
@@ -135,9 +147,9 @@ if __name__ == "__main__":
 
     data = dataRead(dataFile)  # output the train data from the file
     x = createTree(data) # create the regression tree by the data
+
     dot_File(x, output_file_dot) # output the tree information to dot file
-    model = plot_model(data) # plot the line and regression tree model in th graph
-    print(model)
+    model = plot_model(1, data) # plot the line and regression tree model in th graph
     # output the tree model in the pdf
     file_path = os.getcwd()
     os.system(file_path[0:2] + "\n")
@@ -145,6 +157,7 @@ if __name__ == "__main__":
     os.system("dot -Tpdf " + output_file_dot + " -o " + output_file_pdf)
     os.system("start " + output_file_pdf)
 
+    plt.show()
 
 
 
