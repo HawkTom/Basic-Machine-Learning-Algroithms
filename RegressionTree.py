@@ -107,7 +107,7 @@ def dot_File(tree, output_file):
         data = "digraph G{" + "\n\t" + "\n\t".join(command) + "\n}"
         f.write(data)
 
-def plot_model(tree):
+def plot_model(data):
     model_temp = []
     for point in model_point:
         model_temp.append([point[0] + 1, point[1]])
@@ -126,6 +126,8 @@ def plot_model(tree):
     axes.set_xticks(list(range(23)))
     plt.show()
 
+    return model
+
 if __name__ == "__main__":
     dataFile = "train.txt"
     output_file_dot = "regression.dot"
@@ -134,14 +136,14 @@ if __name__ == "__main__":
     data = dataRead(dataFile)  # output the train data from the file
     x = createTree(data) # create the regression tree by the data
     dot_File(x, output_file_dot) # output the tree information to dot file
-    plot_model(x) # plot the line and regression tree model in th graph
-
-    # # output the tree model in the pdf
-    # file_path = os.getcwd()
-    # os.system(file_path[0:2] + "\n")
-    # os.system("cd " + file_path[3:] + "\\")
-    # os.system("dot -Tpdf " + output_file_dot + " -o " + output_file_pdf)
-    # os.system("start " + output_file_pdf)
+    model = plot_model(data) # plot the line and regression tree model in th graph
+    print(model)
+    # output the tree model in the pdf
+    file_path = os.getcwd()
+    os.system(file_path[0:2] + "\n")
+    os.system("cd " + file_path[3:] + "\\")
+    os.system("dot -Tpdf " + output_file_dot + " -o " + output_file_pdf)
+    os.system("start " + output_file_pdf)
 
 
 
