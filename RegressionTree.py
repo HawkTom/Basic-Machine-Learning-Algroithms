@@ -5,12 +5,14 @@ import os
 ErrorPermit = 1
 MinimumSize = 4
 class Tree(object):
-    def __init__(self, separate_data=0, estimate_data=0, num=0):
+    def __init__(self, separate_data=0, estimate_data=0, num=0,dl=0, dr=0):
         self.val = separate_data
         self.estimate = estimate_data
         self.leftChild = None
         self.rightChild = None
         self.amount = num
+        self.leftDepth = dl
+        self.rightDepth = dr
 
 
 
@@ -74,11 +76,13 @@ def createTree(dataSet):
     dataDict = ans[0]
     split_point = ans[1]
     if error[0] <= ErrorPermit or len(dataDict['+']) <= MinimumSize or len(dataDict['-']) <= MinimumSize:
-        return Tree(estimate_data = error[1], num=max(len(dataDict['+']), len(dataDict['-'])))
+        return Tree(estimate_data = error[1], num = len(dataDict['+'])+len(dataDict['-']))
 
     head = Tree(separate_data=split_point[0])
     head.leftChild = createTree(dataDict['+'])
+    head.leftDepth = max(head.leftChild.leftDepth, head.leftChild.rightDepth) + 1
     head.rightChild = createTree(dataDict['-'])
+    head.rightDepth = max(head.rightChild.rightDepth,head.rightChild.leftDepth) + 1
 
     return  head
 
@@ -92,22 +96,26 @@ def plot_tree(tree):
     if tree_left.leftChild == None:
         model_point.append([tree.val+1, tree_left.estimate])
         command.append(str(tree.val) + '->'+ str(tree_left.estimate) +
-                       '[label= \">' + str(tree.val) + 'num='+str(tree_left.amount)+'\"]')
+                       '[label= \">' + str(tree.val) + ' n='+str(tree_left.amount)+'\"]')
     else:
-        command.append(str(tree.val) + '->' + str(tree_left.val) + '[label= \">' + str(tree.val) + '\"]')
+        command.append(str(tree.val) + '->' + str(tree_left.val) + '[label= \">' + str(tree.val) +
+                       ' d='+str(tree.leftDepth)+'\"]')
         plot_tree(tree.leftChild)
 
     if tree_right.leftChild == None:
         model_point.append([tree.val, tree_right.estimate])
         command.append(str(tree.val) + '->' + str(tree_right.estimate)
-                       + '[label= \"<=' + str(tree.val) + 'num='+str(tree_right.amount)+ '\"]')
+                       + '[label= \"<=' + str(tree.val) + ' n='+str(tree_right.amount)+ '\"]')
     else:
-        command.append(str(tree.val) + '->' + str(tree_right.val) + '[label= \"<=' + str(tree.val) + '\"]')
+        command.append(str(tree.val) + '->' + str(tree_right.val) + '[label= \"<=' + str(tree.val) +
+                       ' d='+str(tree.rightDepth)+'\"]')
         plot_tree(tree.rightChild)
 
     return "OK"
 
 def dot_File(tree, output_file):
+    global command
+    command = []
     plot_tree(tree)
     with open(output_file, 'w') as f:
         data = "digraph G{" + "\n\t" + "\n\t".join(command) + "\n}"
