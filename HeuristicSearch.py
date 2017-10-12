@@ -97,11 +97,10 @@ def greedy_search(start, end, blocks, map):
     frontier = [Path(start, 0)]
     explored = []
     while True:
-        node = min(frontier, key=lambda x: x.hn)
-        # print(node.road)
+        node = min(frontier, key=lambda x: (x.hn, x.fn))
         frontier.remove(node)
         explored.append(node.road[-1])
-
+        # print(node.road)
         if node.road[-1] == end:
             return node.road
 
@@ -110,19 +109,33 @@ def greedy_search(start, end, blocks, map):
             if path_next_node not in blocks and path_next_node not in explored \
                     and path_next_node[0] >= 0 and path_next_node[0] <= map[0] \
                     and path_next_node[1] >= 0 and path_next_node[1] <= map[1]:
-                newPath = Path(path_next_node, 0, node)
+                action_cost = h_n(node.road[-1], path_next_node)
+                newPath = Path(path_next_node, action_cost, node)
                 frontier.append(newPath)
+
+def wall_trans(draw_wall):
+    wall = []
+    for corner in draw_wall:
+        if corner not in wall:
+            wall.append(corner)
+        if [corner[0]+1, corner[1]] not in wall:
+            wall.append([corner[0]+1, corner[1]])
+        if [corner[0] + 1, corner[1]+1] not in wall:
+            wall.append([corner[0]+1, corner[1]+1])
+        if [corner[0], corner[1]+1] not in wall:
+            wall.append([corner[0], corner[1]+1])
+    return wall
 
 
 map=[20, 12]
 start = [2, 7]
 end = [18, 5]
-draw_wall1 = [[4, i] for i in range(4, 12)]
-draw_wall2 = [[13,i] for i in range(0, 8)]
-wall1 = [[4, i] for i in range(4, 13)] + [[5, i] for i in range(4, 13)]
-wall2 = [[13, i] for i in range(0, 9)] + [[14, i] for i in range(0, 9)]
+wall1 = [[6, i] for i in range(4, 12)] + [[5,2]]
+wall2 = [[13,i] for i in range(0, 8)]
 
-path1 = greedy_search(start, end, wall1+wall2, map)
-path2 = A_star_search(start, end, wall1+wall2, map)
-search_plot(map,start,end,draw_wall1+ draw_wall2, [np.array(path1),np.array(path2)])
+path1 = greedy_search(start, end, wall_trans(wall1+wall2), map)
+path2 = A_star_search(start, end, wall_trans(wall1+wall2), map)
+# path1 = []
+# path2 = []
+search_plot(map,start,end,wall1+ wall2, [np.array(path1),np.array(path2)])
 print("OK")

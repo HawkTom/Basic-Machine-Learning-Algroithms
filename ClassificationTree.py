@@ -129,7 +129,7 @@ def plot_tree(tree):
         return "OK"
     global command
     for node in tree.next:
-        command.append(tree.attr+str(tree.size)+ "->"+node.attr+str(node.size))
+        command.append(tree.attr+str(tree.size)+ "->"+node.attr+str(node.size)+'[label=' + str(tree.classify) + ']')
         plot_tree(node)
 
 
