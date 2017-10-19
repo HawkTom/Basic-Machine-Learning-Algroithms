@@ -23,8 +23,6 @@ class Path(object):
         self.fn = self.gn + self.hn
 
 
-
-
 def search_plot(map, start, end, wall, path=None):
     fig = plt.figure(0)
     axes = fig.add_subplot(111)
@@ -112,6 +110,7 @@ def greedy_search(start, end, blocks, map):
                 action_cost = h_n(node.road[-1], path_next_node)
                 newPath = Path(path_next_node, action_cost, node)
                 frontier.append(newPath)
+
 
 def wall_trans(draw_wall):
     wall = []
