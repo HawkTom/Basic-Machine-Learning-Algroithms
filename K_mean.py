@@ -26,7 +26,7 @@ def updateCenter(cluster, cs, method):
         for center in cluster:
             avr = np.average(cluster[center], axis=0)
             centers.append(avr)
-    elif method == 'k-media':
+    elif method == 'k-medoids':
         for center in cluster:
             points = np.vstack(cluster[center])
             minDist = sum(sum(abs(cs[center] - points)))
@@ -46,29 +46,31 @@ def distanceCaculate(centers, point):
 
 
 def point_to_cluster(centers, datas):
-    cluster, sumDist = {}, 0
+    cluster, sumDist, data_index = {}, 0, []
     for point in datas:
         index, dist = distanceCaculate(centers, point)
+        data_index.append(index)
         sumDist += dist
         if index not in cluster:
             cluster[index] = [point]
         else:
             cluster[index].append(point)
-    return cluster, sumDist
+    return cluster, sumDist, data_index
 
 
 def KMEAN(data, nCluster, method='k-mean'):
     centers = initCenter(data, nCluster)
     delta_error = 1
     old_sumDist = float('Inf')
-    while delta_error > 0.001:
-        cluster, sumDist = point_to_cluster(centers, data)
+    while True:
+        cluster, sumDist, data_index = point_to_cluster(centers, data)
         delta_error = old_sumDist - sumDist
+        if delta_error > 0.001:
+            return centers, data_index
         # print(delta_error)
         old_sumDist = sumDist
         centers = updateCenter(cluster, centers, method)
-    print(old_sumDist)
-    return centers
+
 
 
 if __name__ == "__main__":
@@ -86,8 +88,9 @@ if __name__ == "__main__":
     plt.plot(x, y, 'bo', markerfacecolor='none')
     data = np.vstack([data1, data2, data3])
     data = dataGenerate()
-    centers = KMEAN(data, 3, 'k-media')
-    centers = KMEAN(data, 3)
+    centers, index = KMEAN(data, 3, 'k-medoids')
+    print(centers,index)
+    #centers = KMEAN(data, 3)
     x, y = centers.T
     plt.plot(x, y, '^', markersize=10, markerfacecolor='k')
     plt.show()
