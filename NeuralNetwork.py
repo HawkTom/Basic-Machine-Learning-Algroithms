@@ -156,4 +156,4 @@ with open("result.csv",'w') as f:
 
 end = time.time()
 print(end-start)
-print("OK")
+print("OK £¡£¡£¡")
