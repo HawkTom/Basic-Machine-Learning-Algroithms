@@ -65,7 +65,7 @@ def KMEAN(data, nCluster, method='k-mean'):
     while True:
         cluster, sumDist, data_index = point_to_cluster(centers, data)
         delta_error = old_sumDist - sumDist
-        if delta_error > 0.001:
+        if delta_error < 0.001:
             return centers, data_index
         # print(delta_error)
         old_sumDist = sumDist
@@ -88,8 +88,7 @@ if __name__ == "__main__":
     plt.plot(x, y, 'bo', markerfacecolor='none')
     data = np.vstack([data1, data2, data3])
     data = dataGenerate()
-    centers, index = KMEAN(data, 3, 'k-medoids')
-    print(centers,index)
+    centers, index = KMEAN(data, 3,'k-medoids')
     #centers = KMEAN(data, 3)
     x, y = centers.T
     plt.plot(x, y, '^', markersize=10, markerfacecolor='k')
