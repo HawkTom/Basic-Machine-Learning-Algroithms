@@ -26,7 +26,8 @@
 |————Neural Network
 	lab8
     ├── data
-    │   └── cifar-10-batches-py   // * Not provided. You need to download it from 	 	     		        <https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz>
+    │   └── cifar-10-batches-py   // * Not provided. You need to download it from 	 
+			                     // <https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz>
     │       ├── banches.meta
     │       ├── data_batch_1
     │       └── ...
