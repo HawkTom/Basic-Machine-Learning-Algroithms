@@ -59,16 +59,18 @@ def main():
     class_names = cifar10.load_class_names()
     images_train, cls_idx_train, labels_train = cifar10.load_training_data()
     images_test, cls_idx_test, labels_test = cifar10.load_test_data()
-    
-    images_test = np.reshape(images_test, (images_test.shape[0], 32 * 32, 3))[:,:,0]
-    images_test = np.reshape(images_test, (images_test.shape[0], 32, 32))
-    
-    images_train = np.reshape(images_train, (images_train.shape[0], 32 * 32, 3))[:,:,0]
-    images_train = np.reshape(images_train, (images_train.shape[0], 32, 32))
-    
+
+    # images_test = np.reshape(
+    #     images_test, (images_test.shape[0], 32 * 32, 3))[:, :, 0]
+    # images_test = np.reshape(images_test, (images_test.shape[0], 32, 32))
+
+    # images_train = np.reshape(
+    #     images_train, (images_train.shape[0], 32 * 32, 3))[:, :, 0]
+    # images_train = np.reshape(images_train, (images_train.shape[0], 32, 32))
+
     # Plot the first 9 training images and labels
     plot_9images(images=images_train[0:9], cls_idx_true=cls_idx_train[0:9],
-                all_cls_names=class_names, smooth=True)
+                 all_cls_names=class_names, smooth=True)
 
     # Build your predictor
     NN = train_Batch(images_train, labels_train)
@@ -78,10 +80,12 @@ def main():
     plot_9images(images=images_test[samples], cls_idx_true=cls_idx_test[samples],
                  cls_idx_pred=predict(images_test[samples], NN), all_cls_names=class_names, smooth=True)
 
-    print(f'\nAccuracy: {(predict(images_test, NN) == cls_idx_test).mean() * 100}%\n')
+    print(
+        f'\nAccuracy: {(predict(images_test, NN) == cls_idx_test).mean() * 100}%\n')
+
 
 if __name__ == '__main__':
     start = time.time()
     main()
     end = time.time()
-    print(end-start)
+    print(end - start)
