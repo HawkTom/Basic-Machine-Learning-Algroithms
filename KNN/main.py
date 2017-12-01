@@ -3,7 +3,7 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 import cifar10
-from KNN import predict, np
+from KNN import predict, np, train
 
 
 def plot_9images(images, cls_idx_true, cls_idx_pred=None, all_cls_names=None, smooth=True):
@@ -73,15 +73,15 @@ def main():
                  all_cls_names=class_names, smooth=True)
 
     # Build your predictor
-    # NN = train_Batch(images_train, labels_train)
+    model = train(images_train, labels_train)
 
     # Visualize your prediction
     samples = random.sample(range(len(images_test)), 9)
     plot_9images(images=images_test[samples], cls_idx_true=cls_idx_test[samples],
-                 cls_idx_pred=predict(images_test[samples]), all_cls_names=class_names, smooth=True)
+                 cls_idx_pred=predict(images_test[samples], model), all_cls_names=class_names, smooth=True)
 
     print(
-        f'\nAccuracy: {(predict(images_test) == cls_idx_test).mean() * 100}%\n')
+        f'\nAccuracy: {(predict(images_test, model) == cls_idx_test).mean() * 100}%\n')
 
 
 if __name__ == '__main__':
