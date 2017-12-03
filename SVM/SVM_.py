@@ -10,6 +10,8 @@ def svm_train(x, y, kernel="linear"):
         sigma = 0.1
         K = dist.cdist(x, x)
         K = np.exp(-K**2 / (2 * sigma * sigma))
+        # print(K)
+        # return 0
     elif kernel == "polynomialKernel":
         d = 2
         K = np.dot(x, x.T)
@@ -120,7 +122,7 @@ def svmPredict(x, y, model, X, kernel):
     X: test data
     model[2]: alpha
     """
-    print(x.shape, X.shape)
+    # print(x.shape, X.shape)
     alpha = model[2]  # alpha
     if kernel == "gaussianKernel":
         sigma = 0.1
@@ -133,7 +135,6 @@ def svmPredict(x, y, model, X, kernel):
     K = y * K
     K = alpha * K
     p = np.sum(K, axis=0) + model[1]
-    p.shape = (1, X.shape[0])
     place = np.argwhere(p >= 0)
     p[place[:, 0]] = 1
     place = np.argwhere(p < 0)
@@ -155,10 +156,11 @@ def main():
     y.shape = (y.shape[0], 1)
     place = np.argwhere(y == 0)
     y[place[:, 0]] = -1
-    print(x.shape, y.shape)
-    classifier = svm_train(x, y, 'gaussianKernel')
+    # print(x.shape, y.shape)
+    # classifier = svm_train(x, y, 'gaussianKernel')
     # np.save('SVM', classifier)
-    # classifier = np.load('SVM.npy')
+    classifier = np.load('SVM.npy')
+    # print(classifier[2])
     # print(classifier)
     result_plot(x, y, classifier, 'gaussianKernel')
 
