@@ -39,7 +39,7 @@ def Softmax(x):
 
 
 def createNN(inputSize, outputSize, numberLayers):
-    hiddenSize = 33
+    hiddenSize = 60
     inputLayer = layer(inputSize)
     hiddenLayer = layer(hiddenSize)
     hiddenLayer.createParameters(inputSize)  # weights: 35x784   bias: 35x1
@@ -68,7 +68,7 @@ def forward(Network, data):
     return outputLayer.output
 
 
-def BP(Network, actual_label, predict_label, learning_rate=0.1):
+def BP(Network, actual_label, predict_label, learning_rate=0.8):
     inputLayer, hiddenLayer, outputLayer = Network[0], Network[1], Network[2]
 
     alpha = learning_rate
@@ -117,9 +117,9 @@ def train(images, one_hot_labels):
 
 def train_Batch(images, one_hot_labels):
     NN = createNN(3072, 10, 3)
-    batch_number = 2500
+    batch_number = 100
     batch_size = int(len(images) / batch_number)
-    for j in range(5):
+    for j in range(20):
         for i in range(batch_number):
             img = images[batch_size * i:batch_size * (i + 1)]
             # img = np.mean(np.reshape(img, (batch_size, 32 * 32, 3)), axis=2)
