@@ -3,16 +3,17 @@ import numpy as np
 
 def train(images, one_hot_lables):
     img = np.reshape(images, (len(images), 32 * 32 * 3))
-    return [img, one_hot_lables]
+    labels = np.argmax(one_hot_lables, axis=1)
+    return [img, labels]
 
 
 def findmodes(vector):
     mode = {}
     for num in vector:
         if num not in mode:
-            mode['num'] = 1
+            mode[num] = 1
         else:
-            mode['num'] += 1
+            mode[num] += 1
     mode = sorted(mode.items(), key=lambda asd: asd[0], reverse=False)
     return int(mode[0][0])
 
@@ -26,7 +27,8 @@ def predict(images, model):
         img = np.reshape(img, (1, 3072))
         disatance = np.sum(abs(data - img), axis=0)
         index = np.argsort(disatance)
-        near_label = train_lable[0, index[0, :]]
-        labels[i] = findmodes(near_label[0, 0:K])
-        break
+        # print(index)
+        near_label = train_lable[index[:]]
+        # print(near_label)
+        labels[i] = findmodes(near_label[0:K])        
     return labels

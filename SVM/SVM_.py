@@ -1,14 +1,19 @@
 import numpy as np
+import scipy.spatial.distance as dist
 import matplotlib.pyplot as plt
 
 
 def svm_train(x, y, kernel="linear"):
     if kernel == "linear":
         K = np.dot(x, x.T)
-    else:
-        pass
-    place = np.argwhere(y == 0)
-    y[place[:, 0]] = -1
+    elif kernel == "gaussianKernel":
+        sigma = 0.1
+        K = dist.cdist(x, x)
+        K = np.exp(-K**2 / (2 * sigma * sigma))
+    elif kernel == "polynomialKernel":
+        d = 2
+        K = np.dot(x, x.T)
+        K = K**d
     m = y.shape[0]
     alpha = np.zeros(y.shape)
     b = 0
@@ -16,7 +21,7 @@ def svm_train(x, y, kernel="linear"):
     eta, C = 0, 1
     L, H = 0, 0
     tol, passes = 0.001, 0
-    while passes < 20:
+    while passes < 5:
         num_changed_alphas = 0
         for i in range(m):
             k_i = K[:, i]
@@ -76,10 +81,10 @@ def svm_train(x, y, kernel="linear"):
         else:
             passes = 0
     w = np.dot((alpha * y).T, x)
-    return [w, b]
+    return [w, b, alpha]
 
 
-def result_plot(x, y, classifier=None):
+def result_plot(x, y, classifier=None, kernel='linear'):
     place = np.argwhere(y == 1)
     label1 = x[place[:, 0]]
     place = np.argwhere(y == -1)
@@ -87,27 +92,76 @@ def result_plot(x, y, classifier=None):
     plt.plot(label1[:, 0], label1[:, 1], '.', color='orange')
     plt.plot(label2[:, 0], label2[:, 1], '.', color='blue')
 
-    if classifier:
-        x = np.linspace(min(x[:, 0]), max(x[:, 1]), 100)
-        y = -(classifier[0][0][0] * x + classifier[1]) / classifier[0][0][1]
-        plt.plot(x, y)
-
+    if len(classifier) > 1:
+        if kernel == 'linear':
+            x = np.linspace(min(x[:, 0]), max(x[:, 1]), 100)
+            y = -(classifier[0][0][0] * x + classifier[1]) / \
+                classifier[0][0][1]
+            plt.plot(x, y)
+        else:
+            x1 = np.linspace(min(x[:, 0]), max(x[:, 0]), 100)
+            x2 = np.linspace(min(x[:, 1]), max(x[:, 1]), 100)
+            X, Y = np.meshgrid(x1, x2)
+            vals = np.zeros_like(X)
+            for i in range(X.shape[1]):
+                this_X = np.vstack((X[:, i], Y[:, i]))
+                this_X = this_X.T
+                vals[:, i] = svmPredict(x, y, classifier, this_X, kernel)
+            plt.contour(X, Y, vals)
+    plt.xticks(())
+    plt.yticks(())
     plt.show()
 
 
-with open("svm_data.txt", 'r') as f:
-    datas = f.read()
-    datas = datas.split('\n')
-    x, y = [], []
-    for sample in datas:
-        s = sample.split('\t')
-        x.append([float(s[0]), float(s[1])])
-        y.append(float(s[2]))
+def svmPredict(x, y, model, X, kernel):
+    """
+    x: train data
+    y: train label
+    X: test data
+    model[2]: alpha
+    """
+    print(x.shape, X.shape)
+    alpha = model[2]  # alpha
+    if kernel == "gaussianKernel":
+        sigma = 0.1
+        K = dist.cdist(x, X)
+        K = np.exp(-K**2 / (2 * sigma * sigma))
+    elif kernel == "polynomialKernel":
+        pass
+    else:
+        pass
+    K = y * K
+    K = alpha * K
+    p = np.sum(K, axis=0) + model[1]
+    p.shape = (1, X.shape[0])
+    place = np.argwhere(p >= 0)
+    p[place[:, 0]] = 1
+    place = np.argwhere(p < 0)
+    p[place[:, 0]] = 0
+    return p
 
-x = np.array(x)
-y = np.array(y)
-y.shape = (y.shape[0], 1)
-classifier = svm_train(x, y)
-# classifier = [np.array([[1, 2]]), 1]
-print(classifier)
-result_plot(x, y, classifier)
+
+def main():
+    with open("svm_data2.txt", 'r') as f:
+        datas = f.read()
+        datas = datas.split('\n')
+        x, y = [], []
+        for sample in datas:
+            s = sample.split('\t')
+            x.append([float(s[0]), float(s[1])])
+            y.append(float(s[2]))
+    x = np.array(x)
+    y = np.array(y)
+    y.shape = (y.shape[0], 1)
+    place = np.argwhere(y == 0)
+    y[place[:, 0]] = -1
+    print(x.shape, y.shape)
+    classifier = svm_train(x, y, 'gaussianKernel')
+    # np.save('SVM', classifier)
+    # classifier = np.load('SVM.npy')
+    # print(classifier)
+    result_plot(x, y, classifier, 'gaussianKernel')
+
+
+if __name__ == '__main__':
+    main()
