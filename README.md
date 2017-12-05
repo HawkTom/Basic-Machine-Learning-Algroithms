@@ -36,6 +36,14 @@
     └── main.py                   // Run this file to see the results
 
 |————Support Vector Machine // it has not finished yet. 
+	├── SVM_.py    // the main impelement of SVM, include Visualization and SMO algorithm
+	├── SVM_test.py // generate a data sample to test SVM algorithm
+		└── S.npy is its model data
+	└── data file
+		├── svm_data.txt // data for linear kernel 
+		├── svm_data2.txt // data for gaussian kernel 
+			└── SVM.npy is its model data
+		└── svm_data_two_cycle.txt // data for gaussian kernel
 
 └── others // some other codes like A* search algorithm and so on
 ```
