@@ -143,27 +143,31 @@ def svm_train(x, y, kernel="linear"):
 ## 3. Results
 **Linear Kernel**
 <table><tr>
-<td>![1](result\1.png)</td>
-<td>![1](result\11..png)</td>
-</tr></table>
-<br><br><br><br>
-**Polynomial Kernel**  
-<table><tr>
-<td>![1](result\2.png)</td>
-<td>![1](result\22..png)</td>
-</tr></table>
-**Gaussian Kernel**  $\sigma = 0.1$
-<table><tr>
-<td>![1](result\3.png)</td>
-<td>![1](result\33..png)</td>
-</tr></table>
-**Gaussian Kernel** $ \sigma = 3$
-<table><tr>
-<td>![1](result\4.png)</td>
-<td>![1](result\44..png)</td>
+<td><img src="https://raw.githubusercontent.com/HawkTom/ML_self_test/master/SVM/result/1.png"></td>
+<td><img src="https://raw.githubusercontent.com/HawkTom/ML_self_test/master/SVM/result/11.png"></td>
 </tr></table>
 
-<br><br><br>
+**Polynomial Kernel**  
+
+<table><tr>
+<td><img src="https://raw.githubusercontent.com/HawkTom/ML_self_test/master/SVM/result/2.png"></td>
+<td><img src="https://raw.githubusercontent.com/HawkTom/ML_self_test/master/SVM/result/22.png"></td>
+</tr></table>
+
+**Gaussian Kernel**  $\sigma = 0.1$
+
+<table><tr>
+<td><img src="https://raw.githubusercontent.com/HawkTom/ML_self_test/master/SVM/result/3.png"></td>
+<td><img src="https://raw.githubusercontent.com/HawkTom/ML_self_test/master/SVM/result/33.png"></td>
+</tr></table>
+
+**Gaussian Kernel** $ \sigma = 3$
+
+<table><tr>
+<td><img src="https://raw.githubusercontent.com/HawkTom/ML_self_test/master/SVM/result/4.png"></td>
+<td><img src="https://raw.githubusercontent.com/HawkTom/ML_self_test/master/SVM/result/44.png"></td>
+</tr></table>
+
 ## 4. Conclusions
 
 SVM is a very classic and useful algorithm. This Lab, we only complete its standard version. And it also has many better version for different problem.  The algorithm to train SVM is SMO. It is also a very efficiency algorithm. The hyper-parameters in the algorithm is very important which will influence the result of classification. 
