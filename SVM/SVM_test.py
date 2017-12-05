@@ -20,5 +20,5 @@ def data_genarate():
 
 x, y = data_genarate()
 # print(x, '\n', y)
-classifier = SVM_.svm_train(x, y, 'gaussianKernel')
-SVM_.result_plot(x, y, classifier, 'gaussianKernel')
+classifier = SVM_.svm_train(x, y, 'polynomialKernel')
+SVM_.result_plot(x, y)

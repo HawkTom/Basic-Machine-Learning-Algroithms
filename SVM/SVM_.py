@@ -10,8 +10,6 @@ def svm_train(x, y, kernel="linear"):
         sigma = 0.1
         K = dist.cdist(x, x)
         K = np.exp(-K**2 / (2 * sigma * sigma))
-        # print(K)
-        # return 0
     elif kernel == "polynomialKernel":
         d = 2
         K = np.dot(x, x.T)
@@ -20,7 +18,7 @@ def svm_train(x, y, kernel="linear"):
     alpha = np.zeros(y.shape)
     b = 0
     E = np.zeros(y.shape)
-    eta, C = 0, 1
+    eta, C = 0, 0.5
     L, H = 0, 0
     tol, passes = 0.001, 0
     while passes < 5:
@@ -35,7 +33,6 @@ def svm_train(x, y, kernel="linear"):
                 j = np.random.randint(m)
                 while j == i:
                     j = np.random.randint(m)
-                # j = 21
                 # calculate error of j
                 k_j = K[:, j]
                 k_j.shape = y.shape
@@ -86,7 +83,7 @@ def svm_train(x, y, kernel="linear"):
     return [w, b, alpha]
 
 
-def result_plot(x, y, classifier=None, kernel='linear'):
+def result_plot(x, y, classifier=[], kernel='linear'):
     place = np.argwhere(y == 1)
     label1 = x[place[:, 0]]
     place = np.argwhere(y == -1)
@@ -122,14 +119,15 @@ def svmPredict(x, y, model, X, kernel):
     X: test data
     model[2]: alpha
     """
-    # print(x.shape, X.shape)
     alpha = model[2]  # alpha
     if kernel == "gaussianKernel":
         sigma = 0.1
         K = dist.cdist(x, X)
         K = np.exp(-K**2 / (2 * sigma * sigma))
     elif kernel == "polynomialKernel":
-        pass
+        d = 2
+        K = np.dot(x, X.T)
+        K = K**d
     else:
         pass
     K = y * K
@@ -143,7 +141,12 @@ def svmPredict(x, y, model, X, kernel):
 
 
 def main():
-    with open("svm_data2.txt", 'r') as f:
+    '''
+    svm_data.txt:  linear kernel, C = 1
+    svm_data2.txt: gaussianKnernel, sigma=0.1, C = 1
+    svm_data_two_cycle: gaussianKnel, sigma=3, C = 0.5
+    '''
+    with open("svm_data_two_cycle.txt", 'r') as f:
         datas = f.read()
         datas = datas.split('\n')
         x, y = [], []
@@ -156,13 +159,9 @@ def main():
     y.shape = (y.shape[0], 1)
     place = np.argwhere(y == 0)
     y[place[:, 0]] = -1
-    # print(x.shape, y.shape)
-    # classifier = svm_train(x, y, 'gaussianKernel')
-    # np.save('SVM', classifier)
-    classifier = np.load('SVM.npy')
-    # print(classifier[2])
-    # print(classifier)
-    result_plot(x, y, classifier, 'gaussianKernel')
+    kernel = ['linear', 'polynomialKernel', 'gaussianKernel']
+    classifier = svm_train(x, y, kernel[2])
+    result_plot(x, y, classifier, kernel[2])
 
 
 if __name__ == '__main__':
