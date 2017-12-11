@@ -1,3 +1,5 @@
 .vscode/
 data/
 NeuralNetworks/__pycache__/
+Naive Bayes/assignment1_data.csv
+Naive Bayes/assignment2_data.csv
