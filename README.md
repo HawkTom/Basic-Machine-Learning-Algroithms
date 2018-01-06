@@ -35,7 +35,7 @@
     ├── lab8.py                   // You should finish the functions in this file
     └── main.py                   // Run this file to see the results
 
-|————Support Vector Machine // it has not finished yet. 
+|————Support Vector Machine 
 	├── SVM_.py    // the main impelement of SVM, include Visualization and SMO algorithm
 	├── SVM_test.py // generate a data sample to test SVM algorithm
 		└── S.npy is its model data
@@ -44,6 +44,16 @@
 		├── svm_data2.txt // data for gaussian kernel 
 			└── SVM.npy is its model data
 		└── svm_data_two_cycle.txt // data for gaussian kernel
+
+|————Naive Bayes 
+	└── Spam-filtering.py    // naviv bayes for spam filtering
+
+
+|————Reinforcement Learning 
+	├── CartPole_Q_Learnig.py    // the Q Learning algorithm for openai cartpole.
+								// The details of code could refer to https://dev.to/n1try/cartpole-with-q-learning---first-experiences-with-openai-gym
+	├── image // some image resources
+	└── README // Report
 
 └── others // some other codes like A* search algorithm and so on
 ```
